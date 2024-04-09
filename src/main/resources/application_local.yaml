@@ -1,0 +1,27 @@
+# docker run -p 8080:8080 wiremock/wiremock:3.4.2
+# to run wiremock locally
+
+# run this app and go to localhost:9090/__admin/mappings
+
+server:
+  port: 9090
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: wiremock
+          uri: http://localhost:8080/
+          predicates:
+            - Path=/__admin/mappings
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+

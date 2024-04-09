@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiremock-deployment
+  namespace: wiremock-namespace
+spec:
+  selector:
+    matchLabels:
+      app: wiremock
+  template:
+    metadata:
+      labels:
+        app: wiremock
+    spec:
+      containers:
+        - name: wiremock
+          image: wiremock/wiremock:3.4.2
+          args: ["--verbose"]
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /__admin/mappings
+            initialDelaySeconds: 3
+            periodSeconds: 2
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /__admin/mappings
+            initialDelaySeconds: 3
+            periodSeconds: 2
+            failureThreshold: 1
+          ports:
+            - containerPort: 8080

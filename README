@@ -1,0 +1,44 @@
+#######
+In order to deploy the wiremock service:
+
+
+- kind create cluster
+
+- kind load docker-image wiremock/wiremock:3.4.2
+
+- kubectl apply -f src/main/resources/k8s/wiremock/
+
+- kubectl apply -f src/main/resources/k8s/wiremock-default-namespace
+
+
+#######
+In order to build and deploy our app/service:
+
+- mvn clean install
+
+- kind load docker-image springcloud/gateway-demo:1.0.0
+
+- kubectl apply -f src/main/resources/k8s/app/
+
+  # exec into the cluster
+- docker ps
+- docker exec -u 0 --privileged -it <CONTAINER_ID> bash
+- kubectl get pods -o wide
+- curl 10.244.0.6:8080/services
+  both 'wiremock-default-service' and 'wiremock-service' are discovered
+
+- kubectl get pods -o wide
+  find the IP of the gateway-demo project then:
+
+- curl 10.244.0.7:8080/wiremock-service/__admin/mappings
+- curl 10.244.0.7:8080/wiremock-default-service/__admin/mappings
+
+To see that both work.
+
+
+
+
+
+
+
+

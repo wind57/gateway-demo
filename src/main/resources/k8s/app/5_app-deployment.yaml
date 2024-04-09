@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-demo
+spec:
+  selector:
+    matchLabels:
+      app: gateway-demo
+  template:
+    metadata:
+      labels:
+        app: gateway-demo
+    spec:
+      serviceAccountName: spring-cloud-kubernetes-serviceaccount
+      containers:
+        - name: gateway-demo
+          image: docker.io/springcloud/gateway-demo:1.0.0
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/readiness
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health/liveness
+          ports:
+            - containerPort: 8080
+          env:
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK #_CLOUD_KUBERNETES_CLIENT_DISCOVERY
+              value: "TRACE" #"DEBUG"
